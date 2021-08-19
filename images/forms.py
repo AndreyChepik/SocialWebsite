@@ -30,8 +30,10 @@ class ImageCreateForm(forms.ModelForm):
         extension = image_url.rsplit('.', 1)[1].lower()
         image_name = f'{name}.{extension}'
         # качаем изображение из указанного урл
-        response = request.urlopen(image_url)
-        image.image.save(image_name, ContentFile(response.read()), save=False)
+        page = request.Request(image_url, headers={'User-Agent': 'Mozilla/5.0'})
+        # обходим ошибку 403 из urllib: открываем ссылку как браузер, а не как python urllib
+        resp = request.urlopen(page)
+        image.image.save(image_name, ContentFile(resp.read()), save=False)
         if commit:
             image.save()
         return image

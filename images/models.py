@@ -1,6 +1,7 @@
 from django.db import models
 from django.conf import settings
 from django.utils.text import slugify
+from django.urls import reverse
 
 
 class Image(models.Model):
@@ -18,6 +19,9 @@ class Image(models.Model):
                                         related_name='images_liked',
                                         blank=True) # каждый пользователь может лайкать много фото, и каждое
                                                     # фото может иметь много лайков
+
+    def get_absolute_url(self):
+        return reverse('images:detail', args=[self.id, self.slug])
 
     def save(self, *args, **kwargs):
         # slug automatically generates from title
